@@ -1,0 +1,47 @@
+{
+  "private": true,
+  "name": "agentica-template-nodejs",
+  "version": "0.1.0",
+  "description": "Template repository of Agentica for NodeJS WebSocket Server",
+  "scripts": {
+    "build": "ts-patch build",
+    "prepare": "ts-patch install && ts-node build/env.ts",
+    "start": "ts-node src/main.ts",
+    "start-http": "ts-node src/httpServer.ts"
+  },
+  "keywords": [
+    "agentica",
+    "template",
+    "nodejs",
+    "websocket"
+  ],
+  "author": "Wrtn Technologies",
+  "license": "ISC",
+  "dependencies": {
+    "@agentica/core": "^0.30.6",
+    "@agentica/rpc": "^0.30.6",
+    "@samchon/openapi": "^4.6.0",
+    "@wrtnlabs/connector-arxiv-search": "^0.1.506",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "dotenv-expand": "^12.0.1",
+    "express": "^5.1.0",
+    "openai": "^5.10.2",
+    "tgrid": "^1.2.0",
+    "tstl": "^3.0.0",
+    "typia": "^9.7.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.13.10",
+    "@types/uuid": "^10.0.0",
+    "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "ts-patch": "^3.3.0",
+    "typescript": "~5.8.3"
+  }
+}

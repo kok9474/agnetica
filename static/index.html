@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>민원 처리 데모</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; }
+    textarea { width: 100%; }
+    pre { background: #f4f4f4; padding: .5rem; }
+  </style>
+</head>
+<body>
+  <h1>민원 처리 데모</h1>
+  <form id="complaintForm">
+    <label>이미지 업로드:
+      <input type="file" id="fileInput" accept="image/*" required>
+    </label><br><br>
+    <label>민원 텍스트:
+      <textarea id="textInput" rows="4" placeholder="민원 내용을 입력하세요" required></textarea>
+    </label><br>
+    <button type="submit">전송</button>
+  </form>
+
+  <h2>결과</h2>
+  <pre id="result">아직 전송된 데이터가 없습니다.</pre>
+
+  <script>
+  document.getElementById("complaintForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const file = document.getElementById("fileInput").files[0];
+    const rawText = document.getElementById("textInput").value;
+    const resultEl = document.getElementById("result");
+    resultEl.textContent = "처리 중... 잠시만 기다려주세요.";
+
+    try {
+      // 1) Vision API 호출
+      const formData = new FormData();
+      formData.append("file", file);
+      const visionResp = await fetch("/vision/analyze", {
+        method: "POST",
+        body: formData
+      });
+      const visionJson = await visionResp.json();
+      console.log("Vision:", visionJson);
+
+      // 백엔드-프런트 키 보정
+      const ocr = visionJson.ocr_text ?? visionJson.ocr ?? "";
+
+      // 2) Text 변환 API 호출
+      const textResp = await fetch("http://localhost:9000/text/transform", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rawText: rawText,
+        })
+      });
+      const textJson = await textResp.json();
+      console.log("TextTransform:", textJson);
+
+      // 3) 결과 화면에 그리기
+      resultEl.textContent = 
+        `✨ OCR 텍스트: ${visionJson.ocr}\n` 
+        //`✨ 분류(카테고리): ${visionJson.category}\n\n` +
+         `📋 격어체 변환:\n${textJson.formalText}`;
+    } catch (err) {
+      console.error(err);
+      resultEl.textContent = "에러가 발생했습니다. 콘솔을 확인하세요.";
+    }
+  });
+  </script>
+</body>
+</html>
